@@ -1,0 +1,12 @@
+{
+  "name": "Mummy's Inn",
+  "short_name": "Mummy's Inn",
+  "description": "Campus food delivery, made easy.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf2",
+  "theme_color": "#ff5f45",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

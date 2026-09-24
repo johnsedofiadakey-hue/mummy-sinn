@@ -1,0 +1,10 @@
+{
+  "indexes": [
+    { "collectionGroup": "orders", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "trackingTokenHash", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "orders", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "paymentStatus", "order": "ASCENDING" }, { "fieldPath": "reservation.expiresAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "menuItems", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "isAvailable", "order": "ASCENDING" }, { "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "sortOrder", "order": "ASCENDING" }] },
+    { "collectionGroup": "preorderSlots", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "serviceDate", "order": "ASCENDING" }, { "fieldPath": "startsAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "auditLogs", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "entityType", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] }
+  ],
+  "fieldOverrides": []
+}

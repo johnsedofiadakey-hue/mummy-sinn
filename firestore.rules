@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public menu data is intentionally read-only. The checkout/order engine will
+    // write guest orders from a trusted server route or Cloud Function in Phase 2.
+    match /categories/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
+    match /menuItems/{id} { allow read: if resource.data.isAvailable == true; allow write: if false; }
+    match /modifiers/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
+    match /preorderSlots/{id} { allow read: if resource.data.isOpen == true; allow write: if false; }
+    match /deliveryLocations/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
+    match /promotions/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
+    match /settings/{id} { allow read: if id == "public"; allow write: if false; }
+
+    // Never allow unauthenticated clients direct access to operational records.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

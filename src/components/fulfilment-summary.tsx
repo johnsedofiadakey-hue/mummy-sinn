@@ -1,0 +1,20 @@
+"use client";
+import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
+import { fulfilmentProblem, useCart } from "@/components/cart-provider";
+import { publicSettings } from "@/lib/mock-data";
+import { useNow } from "@/lib/use-online";
+
+/** Cart-level "when" line with a Change link and any problem with the chosen time. */
+export function FulfilmentSummary({ returnTo }: { returnTo: string }) {
+  const { fulfilment } = useCart(); const now = useNow();
+  const problem = now ? fulfilmentProblem(fulfilment, now) : null;
+  const text = fulfilment.type === "ASAP" ? `⚡ ASAP · about ${publicSettings.asapWindow}` : `📅 ${fulfilment.label}`;
+  return <div className={`rounded-2xl p-4 ${problem ? "bg-coral/10" : "bg-white shadow-lift"}`}>
+    <div className="flex items-center justify-between gap-3">
+      <div className="min-w-0"><p className="text-xs font-extrabold uppercase tracking-wider text-stone-500">Delivery time</p><p className="mt-0.5 font-black text-ink">{text}</p></div>
+      <Link href={`/preorder?return=${encodeURIComponent(returnTo)}`} className="grid min-h-11 shrink-0 place-items-center rounded-xl bg-cream px-4 text-sm font-black text-ink">Change</Link>
+    </div>
+    {problem && <p role="alert" className="mt-3 flex gap-2 text-sm font-bold text-[#b3321f]"><AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden />{problem}</p>}
+  </div>;
+}
