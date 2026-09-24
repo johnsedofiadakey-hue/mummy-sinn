@@ -1,5 +1,6 @@
 node_modules
 .next
+.firebase
 .env.local
 .env*.local
 !.env.example
