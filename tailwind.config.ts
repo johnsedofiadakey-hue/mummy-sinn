@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: { sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"] },
-      colors: { ink: "#1f1b19", cream: "#fffaf2", coral: "#ff5f45", mango: "#ffb638", leaf: "#397a57" },
+      colors: { ink: "#171616", cream: "#fffdf9", coral: "#ff4232", mango: "#ffc32f", leaf: "#167544" },
       boxShadow: { float: "0 12px 36px rgba(69, 39, 20, .12)", lift: "0 6px 18px rgba(69, 39, 20, .1)" },
       borderRadius: { app: "1.5rem" },
       animation: { "float-in": "floatIn .45s ease-out both", "pulse-soft": "pulseSoft 2.5s ease-in-out infinite" },

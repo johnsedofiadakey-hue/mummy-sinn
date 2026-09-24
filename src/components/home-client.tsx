@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BellRing, ChevronRight, MapPin, Moon, ReceiptText, ShoppingCart } from "lucide-react";
+import { BellRing, CalendarDays, ChevronRight, MapPin, Moon, ReceiptText, Rocket, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { deliveryLocations, money, publicSettings } from "@/lib/mock-data";
+import { deliveryLocations, money, publicSettings, type PublicSettings } from "@/lib/mock-data";
 import { loadDeviceOrders, loadSavedDetails, type DeviceOrder } from "@/lib/device-storage";
 
 const FINISHED = new Set(["DELIVERED", "CANCELLED", "REFUNDED", "PAYMENT_FAILED"]);
@@ -17,26 +17,27 @@ export function HomeHeader() {
     setHall(deliveryLocations.find((location) => location.id === saved?.locationId)?.name ?? null);
     setActive(loadDeviceOrders().find((order) => !FINISHED.has(order.fulfillmentStatus) && Date.now() - Date.parse(order.createdAt) < 86_400_000) ?? null);
   }, []);
-  return <header className="px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))]">
+  return <header className="px-4 pb-1.5 pt-[max(1rem,env(safe-area-inset-top))]">
     <div className="flex items-center justify-between gap-3">
-      <div><h1 className="brand-wordmark text-[1.85rem] leading-none text-coral">Mummy&apos;s Inn</h1><p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-stone-500"><MapPin size={12} className="text-coral" aria-hidden />{hall ? <>Delivering to {hall}</> : "Delivering around campus"}</p></div>
+      <div><h1 className="brand-wordmark text-[1.65rem] leading-none text-coral">Mummy&apos;s Inn</h1><p className="mt-0.5 flex items-center gap-1 text-[10px] font-medium text-stone-500"><MapPin size={12} className="text-coral" aria-hidden />{hall ? <>Delivering to {hall}</> : "Delivering around campus"}</p></div>
       {active && <Link href={`/orders/${active.trackingToken}`} className="flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-black text-ink shadow-lift"><ReceiptText size={17} aria-hidden /> Track {active.orderNumber}</Link>}
-      {!active && <button aria-label="Notifications" className="relative grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-sm"><BellRing size={20} aria-hidden /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-coral ring-2 ring-white" /></button>}
+      {!active && <button aria-label="Notifications" className="relative grid h-10 w-10 place-items-center rounded-full bg-white text-ink shadow-[0_3px_12px_rgba(40,25,15,.08)]"><BellRing size={19} strokeWidth={2.2} aria-hidden /><span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-coral ring-2 ring-white" /></button>}
     </div>
   </header>;
 }
 
-export function TimingChips() {
+/** `settings` is the live public settings from the server; defaults to the bundled sample. */
+export function TimingChips({ settings = publicSettings }: { settings?: PublicSettings }) {
   const router = useRouter(); const { setFulfilment } = useCart();
-  if (!publicSettings.acceptingOrders) return <div role="status" className="mx-5 mt-6 flex gap-3 rounded-app bg-ink p-5 text-white">
+  if (!settings.acceptingOrders) return <div role="status" className="mx-5 mt-6 flex gap-3 rounded-app bg-ink p-5 text-white">
     <Moon size={22} className="shrink-0 text-mango" aria-hidden />
-    <div><p className="font-black">The kitchen is closed right now</p><p className="mt-1 text-sm text-white/75">{publicSettings.notice ?? "You can still browse the menu. Ordering opens again soon."}</p></div>
+    <div><p className="font-black">The kitchen is closed right now</p><p className="mt-1 text-sm text-white/75">{settings.notice ?? "You can still browse the menu. Ordering opens again soon."}</p></div>
   </div>;
-  return <div className="mt-3 grid grid-cols-2 gap-2 px-5">
-    <button disabled={!publicSettings.asapEnabled} onClick={() => { setFulfilment({ type: "ASAP" }); router.push("/menu"); }} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-coral px-3 text-sm font-extrabold text-white shadow-sm disabled:bg-stone-300 disabled:text-stone-600">
-      <span className="text-lg" aria-hidden>🚀</span><span>ASAP <small className="block text-[10px] font-semibold leading-3 text-white/85">{publicSettings.asapEnabled ? publicSettings.asapWindow : "Paused"}</small></span>
+  return <div className="mt-3 grid grid-cols-2 gap-1.5 px-4">
+    <button disabled={!settings.asapEnabled} onClick={() => { setFulfilment({ type: "ASAP" }); router.push("/menu"); }} className="flex min-h-[49px] items-center justify-center gap-2 rounded-xl bg-coral px-3 text-[13px] font-extrabold text-white shadow-sm disabled:bg-stone-300 disabled:text-stone-600">
+      <Rocket size={17} strokeWidth={2.4} aria-hidden/><span>ASAP <small className="block text-[9px] font-semibold leading-3 text-white/85">{settings.asapEnabled ? settings.asapWindow : "Paused"}</small></span>
     </button>
-    <Link href="/preorder?return=/menu" className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-extrabold shadow-sm"><span className="text-lg" aria-hidden>📅</span><span>Preorder <small className="block text-[10px] font-semibold leading-3 text-stone-500">Choose a time</small></span></Link>
+    <Link href="/preorder?return=/menu" className="flex min-h-[49px] items-center justify-center gap-2 rounded-xl bg-[#fafafa] px-3 text-[13px] font-extrabold shadow-sm"><CalendarDays size={17} strokeWidth={2.2} aria-hidden/><span>Preorder <small className="block text-[9px] font-semibold leading-3 text-stone-500">Choose a time</small></span></Link>
   </div>;
 }
 

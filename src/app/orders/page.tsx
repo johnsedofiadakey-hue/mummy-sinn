@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ChevronRight, Trash2 } from "lucide-react";
+import { ChevronRight, ReceiptText, Trash2 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { BackLink, Skeleton } from "@/components/ui";
 import { loadDeviceOrders, removeDeviceOrder, type DeviceOrder } from "@/lib/device-storage";
@@ -16,7 +16,7 @@ export default function OrdersPage() {
     <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/" label="Back to home" /></span><h1 className="text-xl font-black">Your orders</h1></header>
     <p className="mt-4 rounded-[18px] bg-[#fff2e7] p-3 text-xs leading-5 text-stone-700">No account needed. Recent orders stay on this phone, and each order has a shareable tracking link.</p>
     {orders === null ? <div className="mt-6 space-y-3"><Skeleton className="h-24" /><Skeleton className="h-24" /></div>
-      : orders.length === 0 ? <div className="grid min-h-[50vh] place-items-center text-center"><div><span aria-hidden className="text-6xl">🧾</span><h2 className="mt-5 text-xl font-black">No orders on this phone yet</h2><p className="mt-1 text-sm text-stone-600">When you place an order, you can track it here.</p><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></div></div>
+      : orders.length === 0 ? <div className="grid min-h-[50vh] place-items-center text-center"><div><span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/10 text-coral"><ReceiptText size={31}/></span><h2 className="mt-5 text-xl font-black">No orders on this phone yet</h2><p className="mt-1 text-sm text-stone-600">When you place an order, you can track it here.</p><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></div></div>
       : <ul className="mt-5 space-y-3">{orders.map((order) => <li key={order.trackingToken} className="flex items-stretch rounded-[18px] bg-white shadow-sm">
           <Link href={`/orders/${order.trackingToken}`} className="flex min-w-0 flex-1 items-center gap-3 p-4">
             <div className="min-w-0 flex-1">

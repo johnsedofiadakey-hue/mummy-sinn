@@ -52,3 +52,16 @@ Only trusted backend code can change payment, inventory reservation, capacity or
 5. Verify the Paystack webhook signature; independently re-verify the transaction.
 6. Mark payment successful, then move the order into the kitchen queue. Release reservations on failure/expiry/cancellation.
 
+## Admin portal additions
+
+See [admin-portal.md](admin-portal.md). These are the only new or changed shapes. Order, payment and inventory contracts are unchanged.
+
+| Collection | Fields | Notes |
+| --- | --- | --- |
+| `staff/{authUid}` | `authUid`, `displayName`, `roleIds[]`, `isActive` | Document ID **must** equal the Firebase Auth UID. Inactive means no access. |
+| `roles/{roleId}` | `name`, `permissions[]`, `isActive` | Permissions: `dashboard.read`, `menu.read`, `menu.write`, `promotions.read`, `promotions.write`, `settings.read`, `settings.write`, `uploads.write`. |
+| `menuItems/{id}` | adds `isArchived`, `imagePath`, `modifierGroupIds[]`, `modifierGroups[]` snapshot (with `priceAdjustmentPesewas`), `sortOrder` | Written only by the admin API. `pricePesewas` is an integer. No staff UID is stored on public documents. |
+| `menuItemSlugs/{slug}` | `menuItemId` | Reservation document that makes slugs unique atomically. Server-only. |
+| `promotions/{id}` (homepage) | `kind: "homepage"`, `title`, `subtitle`, `priceLabel`, `targetMenuItemId`, `imageUrl`, `imagePath`, `startsAt`, `endsAt` (nullable), `isActive`, `priority` | At most one active; activating one pauses the others in the same transaction. Only `kind == "homepage" && isActive` is publicly readable. |
+| `settings/public` | `acceptingOrders`, `asapEnabled`, `notice`, `supportPhone` (E.164) | The admin portal merges only these four fields. |
+| `auditLogs/{id}` | `actorType: "staff"`, `actorId`, `action`, `entityType`, `entityId`, `before`, `after`, `requestId`, `createdAt` | Written in the same transaction as the change. `before` and `after` are whitelisted safe snapshots. |

@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 * { -webkit-tap-highlight-color: transparent; }
-html { background: #fffdf9; }
-body { margin: 0; color: #181719; background: #fffdf9; font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+html { background: #fffefd; }
+body { margin: 0; color: #171616; background: #fffefd; font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 button, input, select, textarea { font: inherit; }
 button { touch-action: manipulation; }
-.app-shell { min-height: 100dvh; max-width: 430px; margin: 0 auto; background: #fffdf9; box-shadow: 0 0 70px rgba(81, 49, 30, .06); }
-.brand-wordmark { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 900; letter-spacing: -.075em; }
+.app-shell { min-height: 100dvh; max-width: 430px; margin: 0 auto; background: #fffefd; box-shadow: 0 0 70px rgba(81, 49, 30, .06); }
+.brand-wordmark { font-family: var(--font-brand), Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; letter-spacing: -.07em; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }.hide-scrollbar { scrollbar-width: none; }
 .hero-orb { background: radial-gradient(circle at 75% 35%, #ffcf70 0 13%, transparent 14%), radial-gradient(circle at 33% 75%, #ff845d 0 18%, transparent 19%), #ff5f45; }
 .hero-sheen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 10%, rgba(255,255,255,.12) 38%, transparent 56%); transform: translateX(-120%); animation: sheen 5.5s ease-in-out infinite; pointer-events: none; }
@@ -22,3 +22,5 @@ button { touch-action: manipulation; }
 @keyframes foodFloat { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
 @keyframes sparkle { 0%,100% { transform: scale(.7); opacity: .35; } 50% { transform: scale(1.3); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+/* Staff admin portal uses the full window instead of the 480px student phone shell. */
+.app-shell:has(.admin-root) { max-width: none; box-shadow: none; background: #f7f5f2; }

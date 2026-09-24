@@ -1,7 +1,7 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, Rocket } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { BackLink, Skeleton } from "@/components/ui";
 import { preorderSlots, publicSettings } from "@/lib/mock-data";
@@ -44,7 +44,7 @@ function DeliveryTime() {
     <p className="mt-5 text-sm leading-5 text-stone-600">Order ahead and we&apos;ll time your meal around your campus day.{lines.length > 0 && " This applies to your whole cart."}</p>
 
     <button role="radio" aria-checked={choice?.type === "ASAP"} disabled={!publicSettings.asapEnabled} onClick={() => setChoice({ type: "ASAP" })} className={`mt-5 flex min-h-16 w-full items-center justify-between rounded-[18px] border-2 p-4 text-left disabled:bg-stone-100 disabled:opacity-60 ${choice?.type === "ASAP" ? "border-coral bg-[#fff8f5] shadow-sm" : "border-stone-100 bg-white"}`}>
-      <div><h2 className="font-black">🚀 Deliver ASAP</h2><p className="mt-1 text-xs font-bold text-stone-500">{publicSettings.asapEnabled ? `35–45 minutes from now` : "ASAP is paused right now"}</p></div>
+      <div><h2 className="flex items-center gap-2 font-black"><Rocket size={18} className="text-coral"/> Deliver ASAP</h2><p className="mt-1 text-xs font-bold text-stone-500">{publicSettings.asapEnabled ? `35–45 minutes from now` : "ASAP is paused right now"}</p></div>
       <Radio on={choice?.type === "ASAP"} />
     </button>
 

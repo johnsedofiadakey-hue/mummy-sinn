@@ -1,11 +1,15 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { CookingPot, CupSoda, Flame, Search, SearchX, UtensilsCrossed, X } from "lucide-react";
 import { BackLink, FoodCard, Pill } from "@/components/ui";
-import { categories, menuItems } from "@/lib/mock-data";
+import { categories as sampleCategories, menuItems as sampleMenuItems } from "@/lib/mock-data";
+import type { Category, MenuItem } from "@/types/domain";
+
+const categoryIcons = { rice: CookingPot, local: UtensilsCrossed, chicken: Flame, snacks: UtensilsCrossed, drinks: CupSoda } as const;
 
 // Filtering runs on the phone: the menu is small, and a network round-trip per tap is slow on campus Wi-Fi.
-export function MenuBrowser({ initialCategory, focusSearch }: { initialCategory?: string; focusSearch?: boolean }) {
+/** `categories`/`menuItems` come from the server (live Firestore catalog); they default to the bundled sample. */
+export function MenuBrowser({ initialCategory, focusSearch, categories = sampleCategories, menuItems = sampleMenuItems }: { initialCategory?: string; focusSearch?: boolean; categories?: Category[]; menuItems?: MenuItem[] }) {
   const [active, setActive] = useState(categories.some((c) => c.id === initialCategory) ? initialCategory : undefined);
   const [query, setQuery] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -21,7 +25,7 @@ export function MenuBrowser({ initialCategory, focusSearch }: { initialCategory?
       .filter((item) => !active || item.categoryId === active)
       .filter((item) => !q || [item.name, item.description, ...(item.tags ?? []), categories.find((c) => c.id === item.categoryId)?.name ?? ""].join(" ").toLowerCase().includes(q))
       .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable));
-  }, [active, query]);
+  }, [active, query, categories, menuItems]);
   const activeName = categories.find((c) => c.id === active)?.name;
 
   return <div className="min-h-screen pb-24">
@@ -35,13 +39,13 @@ export function MenuBrowser({ initialCategory, focusSearch }: { initialCategory?
       </label>
       <div role="group" aria-label="Categories" className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 hide-scrollbar">
         <button data-category onClick={() => setActive(undefined)} aria-pressed={!active}><Pill active={!active}>All</Pill></button>
-        {categories.map((category) => <button key={category.id} data-category onClick={() => setActive(category.id)} aria-pressed={active === category.id}><Pill active={active === category.id}><span aria-hidden className="mr-1">{category.emoji}</span>{category.name}</Pill></button>)}
+        {categories.map((category) => { const Icon = categoryIcons[category.id as keyof typeof categoryIcons] ?? UtensilsCrossed; return <button key={category.id} data-category onClick={() => setActive(category.id)} aria-pressed={active === category.id}><Pill active={active === category.id}><Icon size={14} aria-hidden className="mr-1 inline-block align-[-2px]"/>{category.name}</Pill></button>; })}
       </div>
     </header>
     <p className="sr-only" role="status">{visible.length} dishes shown</p>
     {visible.length ? <div className="grid grid-cols-2 gap-3 px-5 pt-3">{visible.map((item) => <FoodCard key={item.id} item={item} />)}</div>
       : <div className="grid min-h-[45vh] place-items-center px-8 text-center"><div>
-          <span aria-hidden className="text-5xl">🔍</span>
+          <span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/10 text-coral"><SearchX size={31}/></span>
           <h2 className="mt-4 text-lg font-black">{query ? `No results for “${query.trim()}”` : `Nothing in ${activeName ?? "this category"} right now`}</h2>
           <p className="mt-1 text-sm text-stone-600">{query ? "Try a different word, like rice or chicken." : "Check back later, or try another category."}</p>
           <button onClick={() => { setQuery(""); setActive(undefined); }} className="mt-4 min-h-11 rounded-xl bg-coral px-5 font-black text-white">Show all food</button>

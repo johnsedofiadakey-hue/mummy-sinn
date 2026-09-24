@@ -14,7 +14,7 @@ export const categories: Category[] = [
 ];
 
 const extras = { id: "extras", name: "Make it yours", required: false, min: 0, max: 3, options: [
-  { id: "plantain", name: "Sweet plantain", priceAdjustment: 7 }, { id: "egg", name: "Fried egg", priceAdjustment: 5 }, { id: "protein", name: "Extra chicken", priceAdjustment: 12 },
+  { id: "plantain", name: "Sweet plantain", priceAdjustment: 7, isDefault: true }, { id: "egg", name: "Fried egg", priceAdjustment: 5 }, { id: "protein", name: "Extra chicken", priceAdjustment: 12 },
 ] };
 const protein = { id: "protein-choice", name: "Choose your protein", required: true, min: 1, max: 1, options: [
   { id: "chicken", name: "Chicken", priceAdjustment: 0, isDefault: true }, { id: "fish", name: "Fish", priceAdjustment: 5 }, { id: "pork", name: "Local pork", priceAdjustment: 7 },
@@ -29,7 +29,7 @@ export const menuItems: MenuItem[] = [
   { id: "waakye", slug: "waakye-special", name: "Waakye special", description: "Rice and beans with spaghetti, egg, gari, rich stew and shito.", price: 30, categoryId: "local", imageUrl: "/images/food/waakye-v1.png", prepMinutes: 15, isAvailable: true, modifierGroups: [spice, extras], tags: ["Local favourite"] },
   { id: "attieke", slug: "attieke-grilled-fish", name: "Attiéké + grilled fish", description: "Fluffy attiéké, whole charcoal-grilled tilapia, fresh salsa and pepper sauce.", price: 45, categoryId: "chicken", imageUrl: "/images/food/attieke-fish-v1.png", prepMinutes: 24, badge: "New", isAvailable: true, modifierGroups: [spice, extras], tags: ["Fresh grill"] },
   { id: "check-check", slug: "check-check-grill", name: "Check Check grill", description: "Spiced chinchinga skewers, onions, pepper and our smoky house sauce.", price: 25, categoryId: "snacks", imageUrl: "/images/food/check-check-v1.png", prepMinutes: 12, badge: "Quick bite", isAvailable: true, modifierGroups: [spice], tags: ["Snack"] },
-  { id: "sobolo", slug: "cold-sobolo", name: "Cold sobolo", description: "Hibiscus, pineapple and ginger. Properly chilled.", price: 10, categoryId: "drinks", imageUrl: "/images/food/jollof-chicken-v1.png", prepMinutes: 2, isAvailable: true, modifierGroups: [], tags: ["Drink"] },
+  { id: "sobolo", slug: "cold-sobolo", name: "Cold sobolo", description: "Hibiscus, pineapple and ginger. Properly chilled.", price: 10, categoryId: "drinks", imageUrl: "/images/food/sobolo-v1.png", prepMinutes: 2, isAvailable: true, modifierGroups: [], tags: ["Drink"] },
 ];
 
 export const preorderSlots: PreorderSlot[] = [

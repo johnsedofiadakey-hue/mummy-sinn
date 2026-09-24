@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --conditions=react-server --import tsx --test tests/unit/*.test.ts",
+    "test:emulator": "firebase emulators:exec --only auth,firestore,storage --project demo-mummy-sinn \"node --conditions=react-server --import tsx --test --test-concurrency=1 tests/emulator/*.test.ts\"",
+    "test:e2e": "firebase emulators:exec --only auth,firestore,storage --project demo-mummy-sinn \"bash tests/e2e/run-admin-smoke.sh\""
   },
   "dependencies": {
     "firebase": "^11.3.1",
@@ -16,15 +19,18 @@
     "lucide-react": "^0.475.0",
     "next": "^15.1.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.3"
   }
 }

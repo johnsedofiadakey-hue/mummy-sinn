@@ -11,8 +11,8 @@ const store = (request, response) => { if (response.ok) { const copy = response.
 
 self.addEventListener("fetch", (event) => {
   const { request } = event; const url = new URL(request.url);
-  // Never touch writes, other origins (Paystack, Firebase, images CDN) or API routes.
-  if (request.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/")) return;
+  // Never touch writes, other origins (Paystack, Firebase, images CDN), API routes, or staff admin pages (never cache staff data).
+  if (request.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin")) return;
 
   // Pages and RSC payloads: network-first so menus, prices, slots and order status are fresh when online.
   if (request.mode === "navigate" || request.headers.get("RSC") || url.searchParams.has("_rsc")) {

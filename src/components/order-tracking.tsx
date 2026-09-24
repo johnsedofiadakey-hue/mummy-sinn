@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, Circle, Copy, Eye, EyeOff, MapPin, Phone, RefreshCw, Share2, ShoppingBag } from "lucide-react";
+import { AlertTriangle, Check, Circle, Copy, Eye, EyeOff, MapPin, Phone, ReceiptText, RefreshCw, Share2, ShoppingBag } from "lucide-react";
 import type { FulfillmentStatus } from "@/types/domain";
 import { BackLink, DemoNotice, Skeleton, Toast } from "@/components/ui";
 import { findDeviceOrder, type DeviceOrder } from "@/lib/device-storage";
@@ -66,7 +66,7 @@ export function OrderTracking({ token }: { token: string }) {
   if (order === null) return <div className="min-h-screen px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
     <header className="flex items-center gap-3"><BackLink href="/orders" label="Back to orders" /><h1 className="text-2xl font-black">Order tracking</h1></header>
     <div className="grid min-h-[60vh] place-items-center text-center"><div className="max-w-[300px]">
-      <span aria-hidden className="text-6xl">🧾</span><h2 className="mt-5 text-xl font-black">We couldn&apos;t find that order</h2>
+      <span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/10 text-coral"><ReceiptText size={31}/></span><h2 className="mt-5 text-xl font-black">We couldn&apos;t find that order</h2>
       <p className="mt-2 text-sm text-stone-600">Check that you opened the full tracking link from your order.{DEMO_MODE && " In this demo, orders can only be tracked on the phone that placed them."}</p>
       <Link href="/orders" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">See orders on this phone</Link>
     </div></div>

@@ -1,17 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public menu data is intentionally read-only. The checkout/order engine will
-    // write guest orders from a trusted server route or Cloud Function in Phase 2.
+    // Public catalog data is read-only for browsers. Guests never authenticate.
+    // All writes (orders, payments, capacity, catalog edits by staff) go through trusted
+    // server code using the Admin SDK, which is not subject to these rules.
     match /categories/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
     match /menuItems/{id} { allow read: if resource.data.isAvailable == true; allow write: if false; }
     match /modifiers/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
     match /preorderSlots/{id} { allow read: if resource.data.isOpen == true; allow write: if false; }
     match /deliveryLocations/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
-    match /promotions/{id} { allow read: if resource.data.isActive == true; allow write: if false; }
+    // Only the live homepage promotion is public. Promo-code promotions are validated server-side and stay private.
+    match /promotions/{id} { allow read: if resource.data.kind == "homepage" && resource.data.isActive == true; allow write: if false; }
     match /settings/{id} { allow read: if id == "public"; allow write: if false; }
 
-    // Never allow unauthenticated clients direct access to operational records.
+    // Staff administration: never readable or writable from a browser, even by signed-in staff.
+    // The admin portal authorises on the server (staff/{uid} + roles) and uses the Admin SDK.
+    match /staff/{uid} { allow read, write: if false; }
+    match /roles/{id} { allow read, write: if false; }
+    match /auditLogs/{id} { allow read, write: if false; }
+    match /menuItemSlugs/{slug} { allow read, write: if false; }
+
+    // Everything else (orders, payments, inventory, riders, batches…) is default-deny.
     match /{document=**} { allow read, write: if false; }
   }
 }

@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, CreditCard, LockKeyhole, Smartphone, XCircle } from "lucide-react";
+import { CheckCircle2, CreditCard, LockKeyhole, MapPin, PackageOpen, Phone, Plus, Minus, Smartphone, UserRound, XCircle } from "lucide-react";
 import { cartLinePrice, fulfilmentProblem, useCart } from "@/components/cart-provider";
 import { FulfilmentSummary } from "@/components/fulfilment-summary";
 import { HallPicker } from "@/components/hall-picker";
@@ -28,7 +29,7 @@ const newAttemptId = () => crypto.randomUUID();
 
 export default function CheckoutPage() {
   const router = useRouter(); const online = useOnline(); const now = useNow();
-  const { lines, subtotal, clear, hydrated, fulfilment, requote } = useCart();
+  const { lines, subtotal, clear, hydrated, fulfilment, requote, updateQuantity } = useCart();
   const [form, setForm] = useState<Form>(EMPTY);
   const [stage, setStage] = useState<Stage>({ kind: "form" });
   const [attemptId, setAttemptId] = useState("");
@@ -149,8 +150,8 @@ export default function CheckoutPage() {
   if (!lines.length) return <div className="min-h-screen px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
     <header className="flex items-center gap-3"><BackLink href="/menu" label="Back to menu" /><h1 className="text-2xl font-black">Checkout</h1></header>
     <div className="grid min-h-[60vh] place-items-center text-center"><div>
-      {placedElsewhere ? <><span aria-hidden className="text-6xl">✅</span><h2 className="mt-5 text-xl font-black">Order {placedElsewhere.orderNumber} is already placed</h2><p className="mt-1 text-sm text-stone-600">It was completed in another tab.</p><Link href={`/orders/${placedElsewhere.trackingToken}`} className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Track your order</Link></>
-        : <><span aria-hidden className="text-6xl">🥡</span><h2 className="mt-5 text-xl font-black">Your cart is empty</h2><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></>}
+      {placedElsewhere ? <><span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-leaf/15 text-leaf"><CheckCircle2 size={31}/></span><h2 className="mt-5 text-xl font-black">Order {placedElsewhere.orderNumber} is already placed</h2><p className="mt-1 text-sm text-stone-600">It was completed in another tab.</p><Link href={`/orders/${placedElsewhere.trackingToken}`} className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Track your order</Link></>
+        : <><span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/10 text-coral"><PackageOpen size={31}/></span><h2 className="mt-5 text-xl font-black">Your cart is empty</h2><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></>}
     </div></div>
   </div>;
 
@@ -160,45 +161,43 @@ export default function CheckoutPage() {
   const payLabel = DEMO_MODE ? `Place demo order · ${money(total)}` : `Pay ${money(total)}`;
   const blockedReason = !publicSettings.acceptingOrders ? "The kitchen is closed right now." : timingProblem;
 
-  return <div className="min-h-screen px-5 pb-32 pt-[max(1.25rem,env(safe-area-inset-top))]">
-    <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/cart" label="Back to cart" /></span><div className="absolute inset-x-12 text-center"><h1 className="text-xl font-black">Checkout</h1><p className="text-[10px] font-semibold text-stone-500">Guest checkout · no account needed</p></div></header>
-    {DEMO_MODE && <div className="mt-4 rounded-xl bg-[#fff2ee] px-3 py-2 text-[11px] font-semibold text-[#a43a22]">Preview mode — no payment is taken.</div>}
+  return <div className="min-h-screen px-4 pb-32 pt-[max(1rem,env(safe-area-inset-top))]">
+    <header className="relative flex min-h-10 items-center justify-center"><span className="absolute left-0"><BackLink href="/cart" label="Back to cart" /></span><div className="absolute inset-x-12 text-center"><h1 className="text-[17px] font-black tracking-[-.03em]">Checkout</h1></div></header>
     {banner && <p role="alert" className="mt-4 rounded-2xl bg-mango/20 p-4 text-sm font-bold">{banner}</p>}
 
-    <details className="group mt-5 rounded-[18px] bg-white p-3.5 shadow-sm">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between font-black"><span>Your order · {lines.reduce((sum, line) => sum + line.quantity, 0)} item{lines.length === 1 && lines[0].quantity === 1 ? "" : "s"}</span><span className="text-sm text-coral group-open:hidden">Show</span><span className="hidden text-sm text-coral group-open:inline">Hide</span></summary>
-      <ul className="mt-2 space-y-2 border-t border-stone-100 pt-3 text-sm">{lines.map((line) => <li key={line.id} className="flex justify-between gap-3"><span><b>{line.quantity}×</b> {line.menuItem.name}<small className="block text-stone-500">{line.selectedOptions.map((option) => option.name).join(" · ")}</small></span><span className="shrink-0 font-bold">{money(cartLinePrice(line) * line.quantity)}</span></li>)}</ul>
-      <Link href="/cart" className="mt-2 inline-flex min-h-11 items-center text-sm font-black text-coral">Edit cart</Link>
+    <details open className="group mt-3 rounded-[14px] bg-white p-2.5 shadow-sm">
+      <summary className="flex min-h-7 cursor-pointer list-none items-center justify-between text-[13px] font-black"><span>Your order ({lines.reduce((sum, line) => sum + line.quantity, 0)} item{lines.length === 1 && lines[0].quantity === 1 ? "" : "s"})</span><Link href="/cart" onClick={(event) => event.stopPropagation()} className="text-[11px] font-bold text-coral">Edit</Link></summary>
+      <ul className="mt-1.5 space-y-2 border-t border-stone-100 pt-2 text-sm">{lines.map((line) => <li key={line.id} className="flex items-center justify-between gap-2"><span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg"><Image src={line.menuItem.imageUrl} alt="" fill sizes="44px" className="object-cover"/></span><span className="min-w-0 flex-1"><b className="block truncate text-[11px] leading-3">{line.menuItem.name}</b><small className="block truncate text-[9px] text-stone-500">{line.selectedOptions.map((option) => option.name).join(" · ")}</small><strong className="text-[11px] text-ink">{money(cartLinePrice(line) * line.quantity)}</strong></span><span className="flex items-center rounded-full bg-[#fafafa] text-[11px] font-bold"><button type="button" onClick={() => updateQuantity(line.id, line.quantity - 1)} aria-label={`One less ${line.menuItem.name}`} className="grid h-7 w-7 place-items-center"><Minus size={12}/></button><b className="min-w-4 text-center">{line.quantity}</b><button type="button" onClick={() => updateQuantity(line.id, line.quantity + 1)} aria-label={`One more ${line.menuItem.name}`} className="grid h-7 w-7 place-items-center"><Plus size={12}/></button></span></li>)}</ul>
     </details>
     <div className="mt-3"><FulfilmentSummary returnTo="/checkout" /></div>
 
-    <form noValidate className="mt-5 space-y-5" onSubmit={submit} onFocus={(event) => { if (event.target instanceof HTMLInputElement && event.target.type !== "checkbox") setTyping(true); }} onBlur={() => setTyping(false)}>
+    <form noValidate className="mt-4 space-y-4" onSubmit={submit} onFocus={(event) => { if (event.target instanceof HTMLInputElement && event.target.type !== "checkbox") setTyping(true); }} onBlur={() => setTyping(false)}>
       <section>
-        <h2 className="mb-2 text-[15px] font-black">📍 Where should we bring it?</h2>
-        <div className="space-y-3 rounded-[18px] bg-white p-3 shadow-sm">
+        <h2 className="mb-1.5 flex items-center gap-2 text-[13px] font-black"><MapPin size={17} className="text-coral"/> Where should we bring it?</h2><p className="mb-2 text-[10px] text-stone-500">We deliver to all halls and hostels around campus</p>
+        <div className="space-y-2 rounded-[14px] bg-white p-2.5 shadow-sm">
           <HallPicker value={form.locationId} onChange={(id) => update("locationId", id)} error={errors.hall} />
-          <div className="grid grid-cols-[1fr_1.4fr] gap-3">
-            <Field id="block" label="Block (optional)" placeholder="Block B" value={form.block} onChange={(v) => update("block", v)} autoComplete="address-line2" />
-            <Field id="room" label="Room or landmark" placeholder="Room 204" value={form.room} onChange={(v) => update("room", v)} error={errors.room} />
+          <div className="grid grid-cols-2 gap-2">
+            <Field id="block" label="Block" placeholder="Block B" value={form.block} onChange={(v) => update("block", v)} autoComplete="address-line2" />
+            <Field id="room" label="Room / Landmark" placeholder="Room 204" value={form.room} onChange={(v) => update("room", v)} error={errors.room} />
           </div>
-          <Field id="instructions" label="Instructions (optional)" placeholder="Call when outside the lobby" value={form.instructions} onChange={(v) => update("instructions", v)} maxLength={140} />
+          <details className="text-[10px] text-stone-500"><summary className="min-h-8 cursor-pointer content-center font-semibold">Add delivery instructions (optional)</summary><Field id="instructions" label="Instructions" placeholder="Call when outside the lobby" value={form.instructions} onChange={(v) => update("instructions", v)} maxLength={140} /></details>
         </div>
       </section>
 
       <section>
-        <h2 className="mb-2 text-[15px] font-black">👤 Who&apos;s receiving it?</h2>
-        <div className="grid grid-cols-2 gap-3 rounded-[18px] bg-white p-3 shadow-sm">
-          <Field id="name" label="Your name" placeholder="Kofi Mensah" value={form.name} onChange={(v) => update("name", v)} error={errors.name} autoComplete="name" />
-          <Field id="phone" label="Phone number" hint="The rider calls this number on arrival." placeholder="024 123 4567" type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(v) => update("phone", v)} error={errors.phone} />
-          <div className="col-span-2"><Field id="receipt-email" label="Email for payment receipt" hint={DEMO_MODE ? "Optional in this demo. Required for the live Paystack payment flow; not saved to this phone." : "Used by Paystack for secure payment and your receipt. Not saved to this phone."} placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" value={form.receiptEmail} onChange={(v) => update("receiptEmail", v)} error={errors["receipt-email"]} /></div>
+        <h2 className="mb-1.5 flex items-center gap-2 text-[13px] font-black"><UserRound size={17} className="text-coral"/> Who&apos;s receiving it?</h2>
+        <div className="grid grid-cols-2 gap-2 rounded-[14px] bg-white p-2.5 shadow-sm">
+          <Field id="name" icon={<UserRound size={14}/>} label="Name" placeholder="Kofi Mensah" value={form.name} onChange={(v) => update("name", v)} error={errors.name} autoComplete="name" />
+          <Field id="phone" icon={<Phone size={14}/>} label="Phone number" placeholder="024 123 4567" type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(v) => update("phone", v)} error={errors.phone} />
+          {!DEMO_MODE && <div className="col-span-2"><Field id="receipt-email" label="Email for payment receipt" hint="Used by Paystack for secure payment and your receipt. Not saved to this phone." placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" value={form.receiptEmail} onChange={(v) => update("receiptEmail", v)} error={errors["receipt-email"]} /></div>}
         </div>
       </section>
 
       <section>
-        <h2 id="pay-heading" className="mb-2 text-[15px] font-black">💳 Payment method</h2>
-        <div role="radiogroup" aria-labelledby="pay-heading" className="grid grid-cols-2 gap-3">
-          <PayTile active={form.method === "mobile_money"} onClick={() => update("method", "mobile_money")} icon={<Smartphone size={21} aria-hidden className="mb-2 text-coral" />} title="Mobile Money" sub="MTN, Telecel, AT" />
-          <PayTile active={form.method === "card"} onClick={() => update("method", "card")} icon={<CreditCard size={21} aria-hidden className="mb-2 text-coral" />} title="Card" sub="Visa, Mastercard" />
+        <h2 id="pay-heading" className="mb-2 flex items-center gap-2 text-[13px] font-black"><CreditCard size={17} className="text-coral"/> Payment method</h2>
+        <div role="radiogroup" aria-labelledby="pay-heading" className="grid grid-cols-2 gap-2">
+          <PayTile active={form.method === "mobile_money"} onClick={() => update("method", "mobile_money")} icon={<Smartphone size={20} aria-hidden className="text-coral" />} title="Mobile Money" sub="MTN, Telecel, AT" />
+          <PayTile active={form.method === "card"} onClick={() => update("method", "card")} icon={<CreditCard size={20} aria-hidden className="text-ink" />} title="Card" sub="Visa, Mastercard" />
         </div>
         {form.method === "mobile_money" ? <div className="mt-3 space-y-4 rounded-app bg-white p-4 shadow-lift">
           <div>
@@ -287,14 +286,14 @@ function PaymentStatus({ stage, form, total, online, banner, onApprove, onFail, 
 }
 
 function PayTile({ active, onClick, icon, title, sub }: { active: boolean; onClick: () => void; icon: React.ReactNode; title: string; sub: string }) {
-  return <button type="button" role="radio" aria-checked={active} onClick={onClick} className={`rounded-app border-2 p-4 text-left ${active ? "border-coral bg-white shadow-lift" : "border-transparent bg-white"}`}>{icon}<b className="block">{title}</b><small className="text-stone-600">{sub}</small></button>;
+  return <button type="button" role="radio" aria-checked={active} onClick={onClick} className={`flex min-h-[55px] items-center gap-2 rounded-[10px] border p-2.5 text-left ${active ? "border-coral bg-white shadow-sm" : "border-stone-100 bg-white"}`}><span className="shrink-0">{icon}</span><span><b className="block text-[10px]">{title}</b><small className="block text-[8px] text-stone-600">{sub}</small></span><span className={`ml-auto h-3.5 w-3.5 rounded-full border ${active ? "border-coral bg-coral ring-2 ring-white" : "border-stone-300"}`}/></button>;
 }
 
-function Field({ id, label, hint, error, value, onChange, ...props }: Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> & { id: string; label: string; hint?: string; error?: string; value: string; onChange: (value: string) => void }) {
+function Field({ id, label, hint, error, value, onChange, icon, ...props }: Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> & { id: string; label: string; hint?: string; error?: string; value: string; onChange: (value: string) => void; icon?: React.ReactNode }) {
   const describedBy = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
   return <div>
     <label htmlFor={id} className="mb-1.5 block text-xs font-extrabold text-stone-600">{label}</label>
-    <input id={id} {...props} value={value} onChange={(event) => onChange(event.target.value)} aria-invalid={Boolean(error)} aria-describedby={describedBy} className={`min-h-12 w-full rounded-xl bg-cream px-3.5 text-base font-semibold outline-none placeholder:text-stone-500 focus:ring-2 focus:ring-coral ${error ? "ring-2 ring-[#b3321f]" : ""}`} />
+    <div className="relative">{icon && <span aria-hidden className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-500">{icon}</span>}<input id={id} {...props} value={value} onChange={(event) => onChange(event.target.value)} aria-invalid={Boolean(error)} aria-describedby={describedBy} className={`min-h-[43px] w-full rounded-[10px] bg-cream ${icon ? "pl-8 pr-2" : "px-3"} text-[12px] font-semibold outline-none placeholder:text-stone-500 focus:ring-2 focus:ring-coral ${error ? "ring-2 ring-[#b3321f]" : ""}`} /></div>
     {hint && !error && <p id={`${id}-hint`} className="mt-1.5 text-xs text-stone-600">{hint}</p>}
     {error && <p id={`${id}-error`} className="mt-1.5 text-xs font-bold text-[#b3321f]">{error}</p>}
   </div>;

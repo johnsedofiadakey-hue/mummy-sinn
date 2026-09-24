@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, PackageOpen, Plus, Trash2 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { cartLinePrice, fulfilmentProblem, useCart } from "@/components/cart-provider";
 import { FulfilmentSummary } from "@/components/fulfilment-summary";
@@ -30,7 +30,7 @@ export default function CartPage() {
   return <><div className="min-h-screen px-5 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
     <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/menu" label="Back to menu" /></span><h1 className="text-xl font-black">Your order{lines.length ? ` (${lines.reduce((sum, line) => sum + line.quantity, 0)} items)` : ""}</h1></header>
     {!hydrated ? <div className="mt-7 space-y-3" aria-busy="true" aria-label="Loading your cart"><Skeleton className="h-28" /><Skeleton className="h-28" /><Skeleton className="h-20" /></div>
-      : lines.length === 0 ? <div className="grid min-h-[55vh] place-items-center text-center"><div><span aria-hidden className="text-6xl">🥡</span><h2 className="mt-5 text-xl font-black">Nothing delicious here yet.</h2><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></div></div>
+      : lines.length === 0 ? <div className="grid min-h-[55vh] place-items-center text-center"><div><span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-coral/10 text-coral"><PackageOpen size={31}/></span><h2 className="mt-5 text-xl font-black">Nothing delicious here yet.</h2><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></div></div>
       : <>
         {notice && <p role="status" className="mt-5 rounded-2xl bg-mango/20 p-4 text-sm font-bold">{notice}</p>}
         <div className="mt-6"><FulfilmentSummary returnTo="/cart" /></div>

@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Food and promotion images are written only by the admin upload route (Admin SDK, server-side),
+    // which generates <uuid>.<jpg|png|webp> names. Browsers may read exactly those files and nothing else.
+    match /public/menu-images/{file} {
+      allow read: if file.matches('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.](jpg|png|webp)$');
+      allow write: if false;
+    }
+    match /public/promotions/{file} {
+      allow read: if file.matches('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.](jpg|png|webp)$');
+      allow write: if false;
+    }
+    // No listing, no other paths, no browser uploads.
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}
