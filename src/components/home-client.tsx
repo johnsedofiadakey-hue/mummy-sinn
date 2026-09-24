@@ -2,16 +2,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MapPin, Moon, ReceiptText } from "lucide-react";
+import { BellRing, ChevronRight, MapPin, Moon, ReceiptText, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { deliveryLocations, publicSettings } from "@/lib/mock-data";
+import { deliveryLocations, money, publicSettings } from "@/lib/mock-data";
 import { loadDeviceOrders, loadSavedDetails, type DeviceOrder } from "@/lib/device-storage";
-import { useNow } from "@/lib/use-online";
 
 const FINISHED = new Set(["DELIVERED", "CANCELLED", "REFUNDED", "PAYMENT_FAILED"]);
 
 export function HomeHeader() {
-  const now = useNow();
   const [hall, setHall] = useState<string | null>(null);
   const [active, setActive] = useState<DeviceOrder | null>(null);
   useEffect(() => {
@@ -19,14 +17,12 @@ export function HomeHeader() {
     setHall(deliveryLocations.find((location) => location.id === saved?.locationId)?.name ?? null);
     setActive(loadDeviceOrders().find((order) => !FINISHED.has(order.fulfillmentStatus) && Date.now() - Date.parse(order.createdAt) < 86_400_000) ?? null);
   }, []);
-  const hour = now?.getHours();
-  const greeting = hour === undefined ? "Hello," : hour < 12 ? "Good morning," : hour < 17 ? "Good afternoon," : "Good evening,";
-  return <header className="px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
+  return <header className="px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))]">
     <div className="flex items-center justify-between gap-3">
-      <div><p className="text-sm font-bold text-stone-500">{greeting}</p><h1 className="font-black tracking-tight text-ink">Mummy&apos;s Inn <span aria-hidden className="inline-block -rotate-12">🍲</span></h1></div>
+      <div><h1 className="brand-wordmark text-[1.85rem] leading-none text-coral">Mummy&apos;s Inn</h1><p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-stone-500"><MapPin size={12} className="text-coral" aria-hidden />{hall ? <>Delivering to {hall}</> : "Delivering around campus"}</p></div>
       {active && <Link href={`/orders/${active.trackingToken}`} className="flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-black text-ink shadow-lift"><ReceiptText size={17} aria-hidden /> Track {active.orderNumber}</Link>}
+      {!active && <button aria-label="Notifications" className="relative grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-sm"><BellRing size={20} aria-hidden /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-coral ring-2 ring-white" /></button>}
     </div>
-    <p className="mt-4 flex items-center gap-1.5 text-sm font-bold text-stone-600"><MapPin size={15} aria-hidden className="text-coral" />{hall ? <>Delivering to <span className="text-ink">{hall}</span></> : "We deliver to halls and hostels on campus"}</p>
   </header>;
 }
 
@@ -36,10 +32,19 @@ export function TimingChips() {
     <Moon size={22} className="shrink-0 text-mango" aria-hidden />
     <div><p className="font-black">The kitchen is closed right now</p><p className="mt-1 text-sm text-white/75">{publicSettings.notice ?? "You can still browse the menu. Ordering opens again soon."}</p></div>
   </div>;
-  return <div className="mt-6 flex gap-3 overflow-x-auto px-5 hide-scrollbar">
-    <button disabled={!publicSettings.asapEnabled} onClick={() => { setFulfilment({ type: "ASAP" }); router.push("/menu"); }} className="flex min-h-12 shrink-0 items-center gap-2 rounded-2xl bg-ink px-4 text-sm font-extrabold text-white disabled:bg-stone-300 disabled:text-stone-600">
-      <span aria-hidden>⚡</span> ASAP <small className="font-semibold opacity-75">{publicSettings.asapEnabled ? publicSettings.asapWindow : "Paused right now"}</small>
+  return <div className="mt-3 grid grid-cols-2 gap-2 px-5">
+    <button disabled={!publicSettings.asapEnabled} onClick={() => { setFulfilment({ type: "ASAP" }); router.push("/menu"); }} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-coral px-3 text-sm font-extrabold text-white shadow-sm disabled:bg-stone-300 disabled:text-stone-600">
+      <span className="text-lg" aria-hidden>🚀</span><span>ASAP <small className="block text-[10px] font-semibold leading-3 text-white/85">{publicSettings.asapEnabled ? publicSettings.asapWindow : "Paused"}</small></span>
     </button>
-    <Link href="/preorder?return=/menu" className="flex min-h-12 shrink-0 items-center gap-2 rounded-2xl bg-white px-4 text-sm font-extrabold shadow-lift"><span aria-hidden>📅</span> Preorder <small className="font-semibold text-stone-500">Choose a time</small></Link>
+    <Link href="/preorder?return=/menu" className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-extrabold shadow-sm"><span className="text-lg" aria-hidden>📅</span><span>Preorder <small className="block text-[10px] font-semibold leading-3 text-stone-500">Choose a time</small></span></Link>
   </div>;
+}
+
+/** Home-only cart dock mirrors the fast return-to-cart affordance in the mobile design. */
+export function CartDock() {
+  const { count, subtotal } = useCart();
+  if (!count) return null;
+  return <Link href="/cart" className="fixed inset-x-5 bottom-[4.55rem] z-30 mx-auto flex min-h-[52px] max-w-[440px] items-center justify-between rounded-[17px] bg-[#08783f] px-4 text-sm font-black text-white shadow-[0_10px_26px_rgba(5,92,45,.28)]">
+    <span className="flex items-center gap-3"><span className="relative grid h-9 w-9 place-items-center rounded-full bg-white/15"><ShoppingCart size={20} aria-hidden /><span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-coral px-1 text-[9px]">{count}</span></span>{count} item{count === 1 ? "" : "s"} · {money(subtotal).replace(".00", "")}</span><span className="flex items-center gap-1 text-xs">View cart <ChevronRight size={15} /></span>
+  </Link>;
 }

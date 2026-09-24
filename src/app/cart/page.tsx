@@ -28,13 +28,13 @@ export default function CartPage() {
   const blocked = !publicSettings.acceptingOrders || (now ? fulfilmentProblem(fulfilment, now) : null);
 
   return <><div className="min-h-screen px-5 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
-    <header className="flex items-center gap-3"><BackLink href="/menu" label="Back to menu" /><h1 className="text-2xl font-black">Your order</h1></header>
+    <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/menu" label="Back to menu" /></span><h1 className="text-xl font-black">Your order{lines.length ? ` (${lines.reduce((sum, line) => sum + line.quantity, 0)} items)` : ""}</h1></header>
     {!hydrated ? <div className="mt-7 space-y-3" aria-busy="true" aria-label="Loading your cart"><Skeleton className="h-28" /><Skeleton className="h-28" /><Skeleton className="h-20" /></div>
       : lines.length === 0 ? <div className="grid min-h-[55vh] place-items-center text-center"><div><span aria-hidden className="text-6xl">🥡</span><h2 className="mt-5 text-xl font-black">Nothing delicious here yet.</h2><Link href="/menu" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">Browse the menu</Link></div></div>
       : <>
         {notice && <p role="status" className="mt-5 rounded-2xl bg-mango/20 p-4 text-sm font-bold">{notice}</p>}
         <div className="mt-6"><FulfilmentSummary returnTo="/cart" /></div>
-        <ul className="mt-5 space-y-3">{lines.map((line) => <li key={line.id} className="rounded-app bg-white p-4 shadow-lift">
+        <ul className="mt-5 space-y-3">{lines.map((line) => <li key={line.id} className="rounded-[18px] bg-white p-3 shadow-sm">
           <div className="flex gap-3">
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl"><Image src={line.menuItem.imageUrl} alt="" fill sizes="80px" className="object-cover" /></div>
             <div className="min-w-0 flex-1">
@@ -51,12 +51,12 @@ export default function CartPage() {
             </div>
           </div>
         </li>)}</ul>
-        <section className="mt-7 space-y-3 border-t border-stone-200 pt-5 text-sm">
+        <section className="mt-6 space-y-3 border-t border-stone-200 pt-5 text-sm">
           <div className="flex justify-between text-lg font-black"><span>Subtotal</span><span>{money(subtotal)}</span></div>
           <p className="text-stone-600">Delivery fee depends on your hall or hostel. You&apos;ll see it before you pay.</p>
         </section>
         {!publicSettings.acceptingOrders && <p role="alert" className="mt-4 rounded-2xl bg-ink p-4 text-sm font-bold text-white">The kitchen is closed right now, so checkout is paused. Your cart is saved.</p>}
-        <div className="fixed inset-x-0 bottom-[4.4rem] z-20 mx-auto max-w-[480px] px-5 pb-[env(safe-area-inset-bottom)]">
+        <div className="fixed inset-x-0 bottom-[4.4rem] z-20 mx-auto w-full max-w-[430px] px-5 pb-[env(safe-area-inset-bottom)]">
           {blocked ? <span aria-disabled="true" className="flex min-h-14 items-center justify-center rounded-2xl bg-stone-300 px-5 font-black text-stone-600">{publicSettings.acceptingOrders ? "Choose a delivery time to continue" : "Checkout paused"}</span>
             : <Link href="/checkout" className="flex min-h-14 items-center justify-between rounded-2xl bg-coral px-5 font-black text-white shadow-float"><span>Continue to delivery</span><span>{money(subtotal)}</span></Link>}
         </div>

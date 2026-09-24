@@ -161,21 +161,21 @@ export default function CheckoutPage() {
   const blockedReason = !publicSettings.acceptingOrders ? "The kitchen is closed right now." : timingProblem;
 
   return <div className="min-h-screen px-5 pb-32 pt-[max(1.25rem,env(safe-area-inset-top))]">
-    <header className="flex items-center gap-3"><BackLink href="/cart" label="Back to cart" /><div><h1 className="text-2xl font-black">Delivery details</h1><p className="text-xs font-bold text-stone-600">Guest checkout · no account needed</p></div></header>
-    {DEMO_MODE && <div className="mt-5"><DemoNotice><b>Demo checkout.</b> No payment is taken and no real order is created. The next screen lets you simulate the payment result.</DemoNotice></div>}
+    <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/cart" label="Back to cart" /></span><div className="absolute inset-x-12 text-center"><h1 className="text-xl font-black">Checkout</h1><p className="text-[10px] font-semibold text-stone-500">Guest checkout · no account needed</p></div></header>
+    {DEMO_MODE && <div className="mt-4 rounded-xl bg-[#fff2ee] px-3 py-2 text-[11px] font-semibold text-[#a43a22]">Preview mode — no payment is taken.</div>}
     {banner && <p role="alert" className="mt-4 rounded-2xl bg-mango/20 p-4 text-sm font-bold">{banner}</p>}
 
-    <details className="group mt-6 rounded-app bg-white p-4 shadow-lift">
+    <details className="group mt-5 rounded-[18px] bg-white p-3.5 shadow-sm">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between font-black"><span>Your order · {lines.reduce((sum, line) => sum + line.quantity, 0)} item{lines.length === 1 && lines[0].quantity === 1 ? "" : "s"}</span><span className="text-sm text-coral group-open:hidden">Show</span><span className="hidden text-sm text-coral group-open:inline">Hide</span></summary>
       <ul className="mt-2 space-y-2 border-t border-stone-100 pt-3 text-sm">{lines.map((line) => <li key={line.id} className="flex justify-between gap-3"><span><b>{line.quantity}×</b> {line.menuItem.name}<small className="block text-stone-500">{line.selectedOptions.map((option) => option.name).join(" · ")}</small></span><span className="shrink-0 font-bold">{money(cartLinePrice(line) * line.quantity)}</span></li>)}</ul>
       <Link href="/cart" className="mt-2 inline-flex min-h-11 items-center text-sm font-black text-coral">Edit cart</Link>
     </details>
     <div className="mt-3"><FulfilmentSummary returnTo="/checkout" /></div>
 
-    <form noValidate className="mt-7 space-y-7" onSubmit={submit} onFocus={(event) => { if (event.target instanceof HTMLInputElement && event.target.type !== "checkbox") setTyping(true); }} onBlur={() => setTyping(false)}>
+    <form noValidate className="mt-5 space-y-5" onSubmit={submit} onFocus={(event) => { if (event.target instanceof HTMLInputElement && event.target.type !== "checkbox") setTyping(true); }} onBlur={() => setTyping(false)}>
       <section>
-        <h2 className="mb-3 font-black">Where should we deliver?</h2>
-        <div className="space-y-4 rounded-app bg-white p-4 shadow-lift">
+        <h2 className="mb-2 text-[15px] font-black">📍 Where should we bring it?</h2>
+        <div className="space-y-3 rounded-[18px] bg-white p-3 shadow-sm">
           <HallPicker value={form.locationId} onChange={(id) => update("locationId", id)} error={errors.hall} />
           <div className="grid grid-cols-[1fr_1.4fr] gap-3">
             <Field id="block" label="Block (optional)" placeholder="Block B" value={form.block} onChange={(v) => update("block", v)} autoComplete="address-line2" />
@@ -186,16 +186,16 @@ export default function CheckoutPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 font-black">Who&apos;s receiving it?</h2>
-        <div className="space-y-4 rounded-app bg-white p-4 shadow-lift">
+        <h2 className="mb-2 text-[15px] font-black">👤 Who&apos;s receiving it?</h2>
+        <div className="grid grid-cols-2 gap-3 rounded-[18px] bg-white p-3 shadow-sm">
           <Field id="name" label="Your name" placeholder="Kofi Mensah" value={form.name} onChange={(v) => update("name", v)} error={errors.name} autoComplete="name" />
           <Field id="phone" label="Phone number" hint="The rider calls this number on arrival." placeholder="024 123 4567" type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(v) => update("phone", v)} error={errors.phone} />
-          <Field id="receipt-email" label="Email for payment receipt" hint={DEMO_MODE ? "Optional in this demo. Required for the live Paystack payment flow; not saved to this phone." : "Used by Paystack for secure payment and your receipt. Not saved to this phone."} placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" value={form.receiptEmail} onChange={(v) => update("receiptEmail", v)} error={errors["receipt-email"]} />
+          <div className="col-span-2"><Field id="receipt-email" label="Email for payment receipt" hint={DEMO_MODE ? "Optional in this demo. Required for the live Paystack payment flow; not saved to this phone." : "Used by Paystack for secure payment and your receipt. Not saved to this phone."} placeholder="you@example.com" type="email" inputMode="email" autoComplete="email" value={form.receiptEmail} onChange={(v) => update("receiptEmail", v)} error={errors["receipt-email"]} /></div>
         </div>
       </section>
 
       <section>
-        <h2 id="pay-heading" className="mb-3 font-black">How would you like to pay?</h2>
+        <h2 id="pay-heading" className="mb-2 text-[15px] font-black">💳 Payment method</h2>
         <div role="radiogroup" aria-labelledby="pay-heading" className="grid grid-cols-2 gap-3">
           <PayTile active={form.method === "mobile_money"} onClick={() => update("method", "mobile_money")} icon={<Smartphone size={21} aria-hidden className="mb-2 text-coral" />} title="Mobile Money" sub="MTN, Telecel, AT" />
           <PayTile active={form.method === "card"} onClick={() => update("method", "card")} icon={<CreditCard size={21} aria-hidden className="mb-2 text-coral" />} title="Card" sub="Visa, Mastercard" />
@@ -218,14 +218,14 @@ export default function CheckoutPage() {
         {loadSavedDetails() && <button type="button" onClick={() => { forgetDetails(); update("remember", false); }} className="mt-1 min-h-11 text-sm font-black text-coral">Forget saved details</button>}
       </section>
 
-      <section className="rounded-app bg-ink p-5 text-white">
-        <div className="space-y-1.5 text-sm text-white/80"><div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div><div className="flex justify-between"><span>Delivery{hall ? ` to ${hall.name}` : ""}</span><span>{hall ? money(deliveryFee) : "Choose your hall"}</span></div></div>
-        <div className="mt-3 flex justify-between border-t border-white/15 pt-3 text-lg font-black"><span>Total to pay</span><span>{money(total)}</span></div>
-        <p className="mt-2 flex items-center gap-2 text-xs text-white/75"><LockKeyhole size={13} aria-hidden /> {DEMO_MODE ? "Live payments will be handled by Paystack. Nothing is charged in this demo." : "Payment is handled securely by Paystack."}</p>
+      <section className="rounded-[18px] bg-white p-4 shadow-sm">
+        <h2 className="mb-2 font-black">Order summary</h2><div className="space-y-1.5 text-sm text-stone-600"><div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div><div className="flex justify-between"><span>Delivery{hall ? ` to ${hall.name}` : ""}</span><span>{hall ? money(deliveryFee) : "Choose your hall"}</span></div></div>
+        <div className="mt-3 flex justify-between border-t border-stone-100 pt-3 text-lg font-black"><span>Total</span><span className="text-coral">{money(total)}</span></div>
+        <p className="mt-2 flex items-center gap-2 rounded-lg bg-[#eaf6ec] px-2 py-1.5 text-[10px] font-semibold text-leaf"><LockKeyhole size={12} aria-hidden /> {DEMO_MODE ? "A delivery PIN is shown after the demo payment." : "Your delivery PIN arrives after payment."}</p>
       </section>
 
       {blockedReason && <p role="alert" className="rounded-2xl bg-coral/10 p-4 text-sm font-bold text-[#b3321f]">{blockedReason}</p>}
-      {!typing && <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[480px] border-t border-stone-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      {!typing && <div className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[430px] border-t border-stone-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button type="submit" disabled={pending || Boolean(blockedReason) || !online} className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-coral px-5 font-black text-white shadow-float disabled:bg-stone-300 disabled:text-stone-600 disabled:shadow-none">
           {stage.kind === "creating" ? "Creating your order…" : !online ? "You're offline" : payLabel}
         </button>

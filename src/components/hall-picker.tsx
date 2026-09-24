@@ -28,7 +28,7 @@ export function HallPicker({ value, onChange, error }: { value: string; onChange
     {error && <p id="hall-error" className="mt-1.5 text-xs font-bold text-[#b3321f]">{error}</p>}
 
     {open && <div className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/40" onClick={close}>
-      <div role="dialog" aria-modal="true" aria-labelledby="hall-dialog-title" onClick={(event) => event.stopPropagation()} className="flex max-h-[85dvh] w-full max-w-[480px] animate-float-in flex-col rounded-t-[2rem] bg-cream pb-[env(safe-area-inset-bottom)]">
+      <div role="dialog" aria-modal="true" aria-labelledby="hall-dialog-title" onClick={(event) => event.stopPropagation()} className="flex max-h-[85dvh] w-full max-w-[430px] animate-float-in flex-col rounded-t-[2rem] bg-cream pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center justify-between px-5 pt-5"><h2 id="hall-dialog-title" className="text-lg font-black">Where are you staying?</h2><button type="button" onClick={close} aria-label="Close" className="grid h-11 w-11 place-items-center rounded-full bg-white"><X size={18} aria-hidden /></button></div>
         <label className="mx-5 mt-4 flex min-h-12 items-center gap-3 rounded-2xl bg-white px-4 focus-within:ring-2 focus-within:ring-coral">
           <Search size={18} aria-hidden className="text-stone-500" /><span className="sr-only">Search halls and hostels</span>

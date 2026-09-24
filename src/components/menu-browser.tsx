@@ -25,9 +25,9 @@ export function MenuBrowser({ initialCategory, focusSearch }: { initialCategory?
   const activeName = categories.find((c) => c.id === active)?.name;
 
   return <div className="min-h-screen pb-24">
-    <header className="sticky top-0 z-20 bg-cream/95 px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur">
-      <div className="flex items-center gap-3"><BackLink href="/" label="Back to home" /><h1 className="text-2xl font-black">Menu</h1></div>
-      <label className="mt-4 flex min-h-12 items-center gap-3 rounded-2xl bg-white px-4 text-sm font-semibold shadow-sm focus-within:ring-2 focus-within:ring-coral">
+    <header className="sticky top-0 z-20 bg-[#fffdf9]/95 px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur">
+      <div className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/" label="Back to home" /></span><h1 className="text-xl font-black">Menu</h1></div>
+      <label className="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-stone-100 bg-[#f7f7f7] px-4 text-sm font-semibold focus-within:ring-2 focus-within:ring-coral">
         <Search size={19} className="shrink-0 text-stone-500" aria-hidden />
         <span className="sr-only">Search the menu</span>
         <input ref={input} type="search" enterKeyHint="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search jollof, noodles, drinks…" className="min-w-0 flex-1 bg-transparent py-3 text-ink outline-none placeholder:text-stone-500" />
@@ -39,7 +39,7 @@ export function MenuBrowser({ initialCategory, focusSearch }: { initialCategory?
       </div>
     </header>
     <p className="sr-only" role="status">{visible.length} dishes shown</p>
-    {visible.length ? <div className="grid grid-cols-2 gap-4 px-5 pt-3">{visible.map((item) => <FoodCard key={item.id} item={item} />)}</div>
+    {visible.length ? <div className="grid grid-cols-2 gap-3 px-5 pt-3">{visible.map((item) => <FoodCard key={item.id} item={item} />)}</div>
       : <div className="grid min-h-[45vh] place-items-center px-8 text-center"><div>
           <span aria-hidden className="text-5xl">🔍</span>
           <h2 className="mt-4 text-lg font-black">{query ? `No results for “${query.trim()}”` : `Nothing in ${activeName ?? "this category"} right now`}</h2>

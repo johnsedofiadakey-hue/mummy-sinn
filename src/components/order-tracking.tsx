@@ -80,13 +80,13 @@ export function OrderTracking({ token }: { token: string }) {
   const address = [order.hallName, order.block, showAddress ? order.room : maskRoom(order.room)].filter(Boolean).join(" · ");
 
   return <div className="min-h-screen px-5 pb-12 pt-[max(1.25rem,env(safe-area-inset-top))]">
-    <header className="flex items-center gap-3"><BackLink href="/orders" label="Back to orders" /><div><p className="text-xs font-bold uppercase tracking-wider text-coral">Order tracking</p><h1 className="text-2xl font-black">{order.orderNumber}</h1></div></header>
+    <header className="relative flex min-h-11 items-center justify-center"><span className="absolute left-0"><BackLink href="/orders" label="Back to orders" /></span><div className="text-center"><p className="text-[10px] font-bold uppercase tracking-wider text-coral">Order tracking</p><h1 className="text-xl font-black">{order.orderNumber}</h1></div></header>
     {order.demo && <div className="mt-5"><DemoNotice><b>Sample tracking.</b> This status is not live and won&apos;t change by itself.</DemoNotice></div>}
 
-    {exception ? <section role="status" className="mt-5 rounded-[2rem] bg-coral/10 p-6">
+    {exception ? <section role="status" className="mt-5 rounded-[22px] bg-coral/10 p-5">
       <AlertTriangle className="text-[#b3321f]" aria-hidden /><h2 className="mt-3 text-2xl font-black">{exception.title}</h2><p className="mt-2 text-stone-700">{exception.body}</p>
       {exception.action && <Link href={exception.action.href} className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-coral px-5 font-black text-white">{exception.action.label}</Link>}
-    </section> : <section className="mt-5 overflow-hidden rounded-[2rem] bg-ink p-6 text-white">
+    </section> : <section className="mt-5 overflow-hidden rounded-[22px] bg-ink p-5 text-white">
       <h2 className="text-2xl font-black">{status === "DELIVERED" ? "Delivered. Enjoy!" : status === "SCHEDULED" ? "Booked in for later." : "We're making it fresh."}</h2>
       <p className="mt-2 text-white/75">For {order.hallName}{order.orderType === "PREORDER" ? ", in your chosen window." : "."}</p>
       {status !== "DELIVERED" && <div className="mt-5 rounded-2xl bg-white/10 p-4"><p className="text-xs font-bold uppercase tracking-widest text-white/65">{order.orderType === "ASAP" ? "Estimated arrival" : "Delivery window"}</p><p className="mt-1 text-lg font-black">{eta}</p></div>}

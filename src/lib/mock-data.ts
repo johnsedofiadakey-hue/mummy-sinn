@@ -7,26 +7,29 @@ export interface PublicSettings { acceptingOrders: boolean; asapEnabled: boolean
 
 export const categories: Category[] = [
   { id: "rice", name: "Rice", emoji: "🍚", sortOrder: 1, isActive: true },
-  { id: "local", name: "Local", emoji: "🍲", sortOrder: 2, isActive: true },
-  { id: "chicken", name: "Chicken", emoji: "🍗", sortOrder: 3, isActive: true },
-  { id: "snacks", name: "Snacks", emoji: "🥟", sortOrder: 4, isActive: true },
+  { id: "local", name: "Local meals", emoji: "🍲", sortOrder: 2, isActive: true },
+  { id: "chicken", name: "Grills", emoji: "🔥", sortOrder: 3, isActive: true },
+  { id: "snacks", name: "Check Check", emoji: "🍢", sortOrder: 4, isActive: true },
   { id: "drinks", name: "Drinks", emoji: "🥤", sortOrder: 5, isActive: true },
 ];
 
 const extras = { id: "extras", name: "Make it yours", required: false, min: 0, max: 3, options: [
   { id: "plantain", name: "Sweet plantain", priceAdjustment: 7 }, { id: "egg", name: "Fried egg", priceAdjustment: 5 }, { id: "protein", name: "Extra chicken", priceAdjustment: 12 },
 ] };
+const protein = { id: "protein-choice", name: "Choose your protein", required: true, min: 1, max: 1, options: [
+  { id: "chicken", name: "Chicken", priceAdjustment: 0, isDefault: true }, { id: "fish", name: "Fish", priceAdjustment: 5 }, { id: "pork", name: "Local pork", priceAdjustment: 7 },
+] };
 const spice = { id: "spice", name: "How much pepper?", required: true, min: 1, max: 1, options: [
   { id: "mild", name: "Mild", priceAdjustment: 0 }, { id: "medium", name: "Medium", priceAdjustment: 0, isDefault: true }, { id: "hot", name: "Hot", priceAdjustment: 0 },
 ] };
 
 export const menuItems: MenuItem[] = [
-  { id: "jollof-chicken", slug: "jollof-grilled-chicken", name: "Jollof + grilled chicken", description: "Smoky Ghanaian jollof, flame-grilled chicken and our house shito.", price: 35, categoryId: "rice", imageUrl: "https://images.unsplash.com/photo-1631515242808-497c3fbd3972?auto=format&fit=crop&w=1000&q=85", prepMinutes: 20, badge: "Bestseller", isAvailable: true, modifierGroups: [spice, extras], tags: ["Popular", "Lunch"] },
-  { id: "fried-rice", slug: "chicken-fried-rice", name: "Chicken fried rice", description: "Colourful wok fried rice, vegetables and tender chicken strips.", price: 32, categoryId: "rice", imageUrl: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=85", prepMinutes: 18, badge: "Hot right now", isAvailable: true, modifierGroups: [spice, extras], tags: ["Popular"] },
-  { id: "waakye", slug: "waakye-special", name: "Waakye special", description: "Rice and beans with spaghetti, egg, fish and rich stew.", price: 30, categoryId: "local", imageUrl: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1000&q=85", prepMinutes: 15, isAvailable: true, modifierGroups: [spice, extras], tags: ["Local favourite"] },
-  { id: "noodles", slug: "loaded-noodles", name: "Loaded noodles", description: "Quick stir-fried noodles, vegetables and a juicy chicken thigh.", price: 28, categoryId: "chicken", imageUrl: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=1000&q=85", prepMinutes: 12, badge: "Under GHS 30", isAvailable: true, modifierGroups: [spice, extras], tags: ["Quick bites"] },
-  { id: "kebab", slug: "suya-chicken-kebab", name: "Suya chicken kebab", description: "Charred chicken skewers, suya spice and fresh pepper relish.", price: 24, categoryId: "snacks", imageUrl: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=1000&q=85", prepMinutes: 10, isAvailable: false, modifierGroups: [spice], tags: ["Snack"] },
-  { id: "sobolo", slug: "cold-sobolo", name: "Cold sobolo", description: "Hibiscus, pineapple and ginger. Properly chilled.", price: 10, categoryId: "drinks", imageUrl: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=1000&q=85", prepMinutes: 2, isAvailable: true, modifierGroups: [], tags: ["Drink"] },
+  { id: "jollof-chicken", slug: "jollof-grilled-chicken", name: "Jollof + grilled chicken", description: "Smoky Ghanaian jollof, flame-grilled chicken, fried plantain and our house shito.", price: 35, categoryId: "rice", imageUrl: "/images/food/jollof-chicken-v1.png", prepMinutes: 20, badge: "Popular", isAvailable: true, modifierGroups: [protein, extras, spice], tags: ["Popular", "Lunch"] },
+  { id: "local-pork", slug: "local-pork-plantain", name: "Local pork + plantain", description: "Charcoal-grilled local pork, sweet plantain, onions, fresh pepper and shito.", price: 38, categoryId: "local", imageUrl: "/images/food/local-pork-v1.png", prepMinutes: 18, badge: "Hot right now", isAvailable: true, modifierGroups: [protein, extras, spice], tags: ["Popular", "Grill"] },
+  { id: "waakye", slug: "waakye-special", name: "Waakye special", description: "Rice and beans with spaghetti, egg, gari, rich stew and shito.", price: 30, categoryId: "local", imageUrl: "/images/food/waakye-v1.png", prepMinutes: 15, isAvailable: true, modifierGroups: [spice, extras], tags: ["Local favourite"] },
+  { id: "attieke", slug: "attieke-grilled-fish", name: "Attiéké + grilled fish", description: "Fluffy attiéké, whole charcoal-grilled tilapia, fresh salsa and pepper sauce.", price: 45, categoryId: "chicken", imageUrl: "/images/food/attieke-fish-v1.png", prepMinutes: 24, badge: "New", isAvailable: true, modifierGroups: [spice, extras], tags: ["Fresh grill"] },
+  { id: "check-check", slug: "check-check-grill", name: "Check Check grill", description: "Spiced chinchinga skewers, onions, pepper and our smoky house sauce.", price: 25, categoryId: "snacks", imageUrl: "/images/food/check-check-v1.png", prepMinutes: 12, badge: "Quick bite", isAvailable: true, modifierGroups: [spice], tags: ["Snack"] },
+  { id: "sobolo", slug: "cold-sobolo", name: "Cold sobolo", description: "Hibiscus, pineapple and ginger. Properly chilled.", price: 10, categoryId: "drinks", imageUrl: "/images/food/jollof-chicken-v1.png", prepMinutes: 2, isAvailable: true, modifierGroups: [], tags: ["Drink"] },
 ];
 
 export const preorderSlots: PreorderSlot[] = [
